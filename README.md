@@ -56,6 +56,18 @@ To begin, clone this repository onto your local drive.  Then change directory to
 
 To build and run the Kapla Demo see [kaplademo/README.md](kaplademo/README.md).
 
+BEN NOTES:
+
+```
+cd physx
+./generate_projects.sh
+cd compiler/linux-release
+make
+cd ../../bin/linux.clang/release
+./Samples_64
+```
+Show the help to see how to select a demo.
+
 ## Acknowledgements
 
 This depot contains external third party open source software copyright their respective owners.  See [kaplademo/README.md](kaplademo/README.md) and [externals/README.md](externals/README.md) for details.
