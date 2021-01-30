@@ -150,12 +150,12 @@ bool BigConvexData::Load(PxInputStream& stream)
 //	if(!GaussMap::Load(stream))	return false;
 
 		// Import header
-		if(!ReadHeader('G', 'A', 'U', 'S', Version, Mismatch, stream))
-			return false;
+	if(!ReadHeader('G', 'A', 'U', 'S', Version, Mismatch, stream))
+		return false;
 
-		// Import basic info
-		mData.mSubdiv		= Ps::to16(readDword(Mismatch, stream));
-		mData.mNbSamples	= Ps::to16(readDword(Mismatch, stream));
+	// Import basic info
+	mData.mSubdiv		= Ps::to16(readDword(Mismatch, stream));
+	mData.mNbSamples	= Ps::to16(readDword(Mismatch, stream));
 
 	// Load map data
 	mData.mSamples = reinterpret_cast<PxU8*>(PX_ALLOC(sizeof(PxU8)*mData.mNbSamples*2, "BigConvex Samples Data"));
