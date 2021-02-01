@@ -148,6 +148,7 @@ PxFilterFlags SampleLargeWorld::filter(	PxFilterObjectAttributes	attributes0,
 	{
 		pairFlags |= PxPairFlag::eSOLVE_CONTACT;
 		pairFlags |= PxPairFlag::eDETECT_CCD_CONTACT;
+                pairFlags |= PxPairFlag::eDETECT_DISCRETE_CONTACT;
 	}
 
 	return filterFlags;
@@ -481,10 +482,27 @@ void SampleLargeWorld::onDigitalInputEvent(const SampleFramework::InputEvent& ie
 			}
 			break;
 		case THROW_IMPORTANTOBJECT:
+                        {
+                                const PxVec3 pos = getCamera().getPos();
+                                const PxVec3 vel = getCamera().getViewDir() * getDebugObjectsVelocity();
+
+                                bool isImportant = ie.m_Id == THROW_IMPORTANTOBJECT;
+
+                                PxSceneWriteLock scopedLock(*mScene);
+
+                                PxRigidDynamic* actor = createBox(pos, getDebugBoxObjectExtents(), &vel,
+                                        isImportant ? mManagedMaterials[MATERIAL_RED] : mManagedMaterials[MATERIAL_GREEN], mDefaultDensity);
+
+                                actor->setName(gDynamic);
+                                actor->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+
+                                mBGLoader->addDynamicObject(actor, isImportant);
+                        }
+                        break;
 		case THROW_UNIMPORTANCTOBJECT:
 			{
 				const PxVec3 pos = getCamera().getPos();
-				const PxVec3 vel = getCamera().getViewDir() * getDebugObjectsVelocity();
+				const PxVec3 vel = getCamera().getViewDir() * getDebugObjectsVelocity() * 100.0f;  // "Fast"
 				
 				bool isImportant = ie.m_Id == THROW_IMPORTANTOBJECT;
 				
@@ -494,6 +512,7 @@ void SampleLargeWorld::onDigitalInputEvent(const SampleFramework::InputEvent& ie
 					isImportant ? mManagedMaterials[MATERIAL_RED] : mManagedMaterials[MATERIAL_GREEN], mDefaultDensity); 
 				
 				actor->setName(gDynamic);
+                                actor->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 
 				mBGLoader->addDynamicObject(actor, isImportant);
 			}
@@ -648,11 +667,11 @@ void SampleLargeWorld::helpRender(PxU32 x, PxU32 y, PxU8 textAlpha)
 	if(msg)
 		renderer->print(x, y += yInc, msg,scale, shadowOffset, textColor);
 
-	msg = mApplication.inputInfoMsg("Press ","  to throw an important object", THROW_IMPORTANTOBJECT, -1);
+	msg = mApplication.inputInfoMsg("Press ","  to throw an slow object", THROW_IMPORTANTOBJECT, -1);
 	if(msg)
 		renderer->print(x, y += yInc, msg,scale, shadowOffset, textColor);
 
-	msg = mApplication.inputInfoMsg("Press ","  to throw an unimportant object", THROW_UNIMPORTANCTOBJECT, -1);
+	msg = mApplication.inputInfoMsg("Press ","  to throw an fast object", THROW_UNIMPORTANCTOBJECT, -1);
 	if(msg)
 		renderer->print(x, y += yInc, msg,scale, shadowOffset, textColor);
 	
